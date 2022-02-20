@@ -7,6 +7,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import org.junit.Assert.*
+import java.lang.RuntimeException
 
 /**
  * Instrumented test, which will execute on an Android device.
@@ -20,5 +21,29 @@ class ExampleInstrumentedTest {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
         assertEquals("com.leebaeng.util.log.test", appContext.packageName)
+    }
+
+    fun printTest() {
+        val TAG = "Tag"
+        LLog.verbose("Verbose")
+        LLog.verbose("Verbose", TAG)
+        LLog.debug("Debug")
+        LLog.debug("Debug", TAG)
+        LLog.info("Info")
+        LLog.info("Info", TAG)
+        LLog.warn("Warning")
+        LLog.warn("Warning", TAG)
+        LLog.err("Error")
+        LLog.err("Error", TAG)
+        LLog.except(RuntimeException("RuntimeException"), "what is happening?")
+        try {
+            var a = 1 / 0
+        } catch (e: Exception) {
+            LLog.except(e, "Error", TAG)
+        }
+        LLog.sys("Start LLog Application")
+        LLog.sys("Start LLog Application", TAG)
+        LLog.sys("Start LLog Application", printSpline = false)
+        LLog.sys("Start LLog Application", TAG, printSpline = false)
     }
 }
