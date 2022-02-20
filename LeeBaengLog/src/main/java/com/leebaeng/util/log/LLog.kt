@@ -65,7 +65,7 @@ object LLog {
             val priority = LogLevel.EXCEPT.priority
 
             Log.println(priority, header, "\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-            Log.println(priority, header, "${log?: "thrown Exception at ${getCallerClassName()}"} → $e")
+            Log.println(priority, header, "${log ?: "thrown Exception at ${getCallerClassName()}"} → $e")
             for (st in e.stackTrace) Log.println(priority, header, "     $st")
             if (e.cause != null) {
                 val cuz = e.cause
@@ -77,7 +77,7 @@ object LLog {
     }
 
     /** System 로그를 출력한다.(Log level : 7) */
-    fun sys(log: String, tag: Any?, printSpline: Boolean = true) {
+    fun sys(log: String, tag: Any? = null, printSpline: Boolean = true) {
         val header = getHeader(tag)
         val priority = LogLevel.SYSTEM.priority
 
