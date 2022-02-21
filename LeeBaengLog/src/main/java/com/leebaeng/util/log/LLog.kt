@@ -99,17 +99,17 @@ object LLog {
      */
     fun getHeader(tag: Any?): String {
         return if (tag != null) {
-            if (tag != WEB_LOG_TAG) "[$logHeader|${getTagString(tag)}]"
+            if (tag != WEB_LOG_TAG) "[$logHeader|${getTagString(tag) ?: getCallerClassName()}]"
             else "[$logHeader|$WEB_LOG_TAG]"
         } else "[$logHeader|${getCallerClassName()}]"
     }
 
-    fun getTagString(tag: Any?): String {
+    fun getTagString(tag: Any?): String? {
         if (tag != null) {
             return if (tag is String || (!tag.toString().contains("@") && tag.toString().length < 15)) tag.toString()
             else tag.javaClass.simpleName
         }
-        return "Unknown"
+        return null
     }
 
     fun getCallerClassName(): String? {
