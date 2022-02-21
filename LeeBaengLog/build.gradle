@@ -28,15 +28,13 @@ afterEvaluate {
 }
 
 android {
-    compileSdk 30
+    compileSdk 31
 
     defaultConfig {
-        minSdk 26
-        targetSdk 30
+        minSdk 24
+        targetSdk 31
         versionCode 1001
         versionName "0.01.001b"
-
-        consumerProguardFiles "consumer-rules.pro"
     }
 
     buildTypes {
