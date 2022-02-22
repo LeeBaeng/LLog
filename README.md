@@ -14,9 +14,11 @@ The 0.01.001 beta Release notes were:<br>
 • highlight System and Exception Log by spline<br>
 • support print and <intent's extra>(bundle's key and values)<br>
 • Tag is not requirement field. and you can set default tag. (if send context by init() function, default tag is Application name(App:Label))<br>
-• if you didn't input tag, LLog find caller class name and set to tag automatically<br>
-
-# How to Use
+• if you didn't input tag, LLog find caller class name and set to tag automatically
+<br>
+<br>
+<br>
+# How to Add
 This library published by JitPack.
 so you need to Add the JitPack repository to your build file.
 <br>
@@ -51,8 +53,48 @@ dependencies {
 }
 ```
 
+
+
+
 finish! enjoy it ;)
 
+<br>
+<br>
+<br>
+
+# How to Use
+> call init function and send `Context`
+> this is option(not required). if you call init, App Label(Name) is use to Default Tag
+```kotlin
+  override fun onCreate(savedInstanceState: Bundle?) {
+      super.onCreate(savedInstanceState)
+      LLog.init(this) // init is optional
+      LLog.verbose("Hello World verbose")
+      LLog.verbose("Hello World verbose set additional tag", "LLog Test") // you can change additional Tag. additional Tag is optional
+      LLog.debug("Hello World debug")
+      LLog.info("Hello World info")
+      LLog.warn("Hello World warn")
+      LLog.err("Hello World err")
+      LLog.sys("Hello World sys")
+      try{
+          throw RuntimeException()
+      }catch (e: Exception){
+          LLog.except(e, "occur error while onCreate")
+      }
+  }
+```
+
+> print log sample
+![logcat](https://user-images.githubusercontent.com/100067569/155054161-412e0dd8-0723-4501-81ff-db30ca0b6d38.png)
+
+<br>
+<br>
+<br>
+
 [![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fleebaeng%2Fllog&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)
+
+<br>
+<br>
+<br>
 
 ![LeeBaeng's GitHub stats](https://github-readme-stats.vercel.app/api?username=LeeBaeng&show_icons=true&theme=radical)
