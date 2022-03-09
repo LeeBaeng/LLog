@@ -161,23 +161,41 @@ object LLog {
 /** Verbose 로그를 출력한다.(Log level : 0) */
 fun String.logV(tag: Any? = null) = LLog.verbose(this, tag)
 
+/** Verbose 로그를 출력한다.(Log level : 0) */
+fun Any.logV(tag: Any? = null) = LLog.verbose(this.toString(), tag)
+
 /** Debug 로그를 출력한다.(Log level : 1) */
 fun String.logD(tag: Any? = null) = LLog.verbose(this, tag)
+
+/** Debug 로그를 출력한다.(Log level : 1) */
+fun Any.logD(tag: Any? = null) = LLog.verbose(this.toString(), tag)
 
 /** Info 로그를 출력한다.(Log level : 2) */
 fun String.logI(tag: Any? = null) = LLog.verbose(this, tag)
 
+/** Info 로그를 출력한다.(Log level : 2) */
+fun Any.logI(tag: Any? = null) = LLog.verbose(this.toString(), tag)
+
 /** Warning 로그를 출력한다.(Log level : 3) */
 fun String.logW(tag: Any? = null) = LLog.verbose(this, tag)
+
+/** Warning 로그를 출력한다.(Log level : 3) */
+fun Any.logW(tag: Any? = null) = LLog.verbose(this.toString(), tag)
 
 /** Error 로그를 출력한다.(Log level : 4) */
 fun String.logE(tag: Any? = null) = LLog.verbose(this, tag)
 
-/** System 로그를 출력한다.(Log level : 7) */
-fun String.logS(tag: Any? = null, printSpline: Boolean = true) = LLog.sys(this, tag, printSpline)
+/** Error 로그를 출력한다.(Log level : 4) */
+fun Any.logE(tag: Any? = null) = LLog.verbose(this.toString(), tag)
 
 /** Exception 로그를 출력한다.(Log level : 5) */
 fun Exception.logEX(log: String? = null, tag: Any? = null) = LLog.except(this, log, tag)
+
+/** System 로그를 출력한다.(Log level : 7) */
+fun String.logS(tag: Any? = null, printSpline: Boolean = true) = LLog.sys(this, tag, printSpline)
+
+/** System 로그를 출력한다.(Log level : 7) */
+fun Any.logS(tag: Any? = null, printSpline: Boolean = true) = LLog.sys(this.toString(), tag, printSpline)
 
 /** Intent 정보를 출력한다 */
 fun Intent.log(includeExtra: Boolean = true, tag: Any? = null, prefix: String? = null) = LLog.printIntentInfo(this, includeExtra, tag, prefix)
