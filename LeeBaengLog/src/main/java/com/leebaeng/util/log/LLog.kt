@@ -2,6 +2,7 @@ package com.leebaeng.util.log
 
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import android.util.Log
 import com.leebaeng.util.array.LArrUtil
 import java.util.*
@@ -104,6 +105,7 @@ object LLog {
         } else "[$logHeader|${getCallerClassName()}]"
     }
 
+    /** 태그 String을 반환 한다 */
     fun getTagString(tag: Any?): String? {
         if (tag != null) {
             return if (tag is String || (!tag.toString().contains("@") && tag.toString().length < 15)) tag.toString()
@@ -112,6 +114,7 @@ object LLog {
         return null
     }
 
+    /** 로그를 출력한 Class의 이름을 반환한다 */
     fun getCallerClassName(): String? {
         val stElements = Thread.currentThread().stackTrace
         val filterPackages = setOf(this::class.qualifiedName!!, Thread::class.qualifiedName!!)
@@ -124,6 +127,7 @@ object LLog {
         return null
     }
 
+    /** Intent 정보를 출력한다 */
     fun printIntentInfo(intent: Intent?, includeExtra: Boolean = true, tag: Any? = null, prefix: String? = null) {
         if (intent != null) {
             info("${prefix ?: ""} Intent :: $intent, action : ${intent.action}", tag)
@@ -133,17 +137,50 @@ object LLog {
         }
     }
 
+    /** Intent의 Extra 정보를 출력한다 */
     fun printIntentExtras(intent: Intent, tag: Any?) {
-        val bundle = intent.extras
-        if (bundle != null) {
-            for (key in bundle.keySet()) {
-                val value = bundle[key]
-                if (value!! !is Array<*>) info(" └[" + key + "]=" + value.toString() + " (" + value.javaClass.name + ")", tag)
-                else info(
-                    " └[" + key + "]=" + Arrays.deepToString(LArrUtil.convertObjectToArray(value)) + " (Array type : " + value.javaClass.componentType + "[])",
-                    tag
-                )
-            }
+        intent.extras?.let {
+            printBundle(it, tag)
+        }
+    }
+
+    /** Bundle Item 정보를 출력한다 */
+    fun printBundle(bundle: Bundle, tag: Any?) {
+        for (key in bundle.keySet()) {
+            val value = bundle[key]
+            if (value!! !is Array<*>) info(" └[" + key + "]=" + value.toString() + " (" + value.javaClass.name + ")", tag)
+            else info(
+                " └[" + key + "]=" + Arrays.deepToString(LArrUtil.convertObjectToArray(value)) + " (Array type : " + value.javaClass.componentType + "[])",
+                tag
+            )
         }
     }
 }
+
+
+/** Verbose 로그를 출력한다.(Log level : 0) */
+fun String.logV(tag: Any? = null) = LLog.verbose(this, tag)
+
+/** Debug 로그를 출력한다.(Log level : 1) */
+fun String.logD(tag: Any? = null) = LLog.verbose(this, tag)
+
+/** Info 로그를 출력한다.(Log level : 2) */
+fun String.logI(tag: Any? = null) = LLog.verbose(this, tag)
+
+/** Warning 로그를 출력한다.(Log level : 3) */
+fun String.logW(tag: Any? = null) = LLog.verbose(this, tag)
+
+/** Error 로그를 출력한다.(Log level : 4) */
+fun String.logE(tag: Any? = null) = LLog.verbose(this, tag)
+
+/** System 로그를 출력한다.(Log level : 7) */
+fun String.logS(tag: Any? = null, printSpline: Boolean = true) = LLog.sys(this, tag, printSpline)
+
+/** Exception 로그를 출력한다.(Log level : 5) */
+fun Exception.logEX(log: String? = null, tag: Any? = null) = LLog.except(this, log, tag)
+
+/** Intent 정보를 출력한다 */
+fun Intent.log(includeExtra: Boolean = true, tag: Any? = null, prefix: String? = null) = LLog.printIntentInfo(this, includeExtra, tag, prefix)
+
+/** Bundle Item 정보를 출력한다 */
+fun Bundle.log(tag: Any? = null) = LLog.printBundle(this, tag)

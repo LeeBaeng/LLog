@@ -1,5 +1,7 @@
 package com.leebaeng.util.log
 
+import android.content.Intent
+import android.os.Bundle
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
 
@@ -23,6 +25,7 @@ class ExampleInstrumentedTest {
         assertEquals("com.leebaeng.util.log.test", appContext.packageName)
     }
 
+    @Test
     fun printTest() {
         val TAG = "Tag"
         LLog.verbose("Verbose")
@@ -45,5 +48,15 @@ class ExampleInstrumentedTest {
         LLog.sys("Start LLog Application", TAG)
         LLog.sys("Start LLog Application", printSpline = false)
         LLog.sys("Start LLog Application", TAG, printSpline = false)
+
+        "===================================================================================".logW()
+        "Verbose".logV()
+        "Debug".logD()
+        "Info".logI()
+        "Warn".logW()
+        "Error".logE()
+        RuntimeException().logEX("occur error while runtime")
+        Intent().log()
+        Bundle().log()
     }
 }
