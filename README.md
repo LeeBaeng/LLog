@@ -6,6 +6,15 @@ this module will be also support OSL(onScreenLog) soon.<br>
 the OSL is useful in can not check log environment.<br>
 and it can use to report some bugs.<br>
 
+The 1.0.02 Release notes were:
+
+• support Extension Method for Kotlin(Extension for String, Any, Exception, Intent, Bundle Object)
+  - just you can use like this.
+  - Verbose, Debug & Etc : `"this is log!".logV()` // Just write .log#() for String & Any object.
+  - Exception : `e.logEX(TAG)` // tag is optional
+  - Intent : `intent.log()`
+  - Bundle : `bundle.log()`
+
 The 0.01.001 beta Release notes were:<br>
 
 • support various print levels : verbose, debug, info, warn, error, except, sys<br>
@@ -69,18 +78,55 @@ finish! enjoy it ;)
   override fun onCreate(savedInstanceState: Bundle?) {
       super.onCreate(savedInstanceState)
       LLog.init(this) // init is optional
-      LLog.verbose("Hello World verbose")
-      LLog.verbose("Hello World verbose set additional tag", "LLog Test") // you can change additional Tag. additional Tag is optional
-      LLog.debug("Hello World debug")
-      LLog.info("Hello World info")
-      LLog.warn("Hello World warn")
-      LLog.err("Hello World err")
-      LLog.sys("Hello World sys")
-      try{
-          throw RuntimeException()
-      }catch (e: Exception){
-          LLog.except(e, "occur error while onCreate")
-      }
+    }
+```
+
+*v1.0.02 : support kotlin extension method*
+```kotlin
+  "Hello world".logV()
+  "Hello world".logD()
+  "Hello world".logI()
+  "Hello world".logW()
+  "Hello world".logE()
+  "Hello world".logS()
+```
+
+*you can change additional Tag.(optional)*
+```kotlin
+  "this is Debug Message".logD("TAG_OnCreate")
+```
+
+*Any object can call extension methods*
+call obj.toString(). if you want customizing print about object, override toString() method that class!
+```kotlin
+  intent.logD()
+  Fragment().logI() 
+  savedInstanceState.logW()
+```   
+
+*Exception can call extension methods*
+```kotlin
+try{
+    throw RuntimeException()
+}catch (e: Exception){
+    e.logEX()
+    // you can set additional error message and tag(optional)
+    e.logEX("occur error while onCreate", "TAG_OnCreate") 
+}
+```
+and you can call static method. just like this
+```kotlin
+  LLog.verbose("Hello World verbose")
+  LLog.verbose("Hello World verbose set additional tag", "LLog Test") // you can change additional Tag. additional Tag is optional
+  LLog.debug("Hello World debug")
+  LLog.info("Hello World info")
+  LLog.warn("Hello World warn")
+  LLog.err("Hello World err")
+  LLog.sys("Hello World sys")
+  try{
+      throw RuntimeException()
+  }catch (e: Exception){
+      LLog.except(e, "occur error while onCreate")
   }
 ```
 
