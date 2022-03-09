@@ -14,14 +14,14 @@ afterEvaluate {
                 from components.release
                 groupId = 'com.leebaeng.util.log'
                 artifactId = 'LLog'
-                version = '1.0'
+                version = '1.0.02'
             }
 
             debug(MavenPublication) {
                 from components.debug
                 groupId = 'com.leebaeng.util.log'
                 artifactId = 'LLog'
-                version = '1.0'
+                version = '1.0.02'
             }
         }
     }
