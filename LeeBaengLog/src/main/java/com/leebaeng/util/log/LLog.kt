@@ -7,6 +7,7 @@ import android.util.Log
 import com.leebaeng.util.array.LArrUtil
 import com.leebaeng.util.log.LLog.getPrintMethod
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * LeeBaeng Log Module (not Supported <On Screen Log> yet)
@@ -26,7 +27,7 @@ object LLog {
         SYSTEM(7, "S", Log.ASSERT)
     }
 
-    private const val WEB_LOG_TAG = "WebLog"
+//    private const val WEB_LOG_TAG = "WebLog"
     private const val DEFAULT_HEADER = "LLog"
 
     var logLevel: LogLevel = LogLevel.VERBOSE // logLevel for Logcat console
@@ -100,10 +101,18 @@ object LLog {
      * @return 반환형식 : [logHeader|tag]
      */
     fun getHeader(tag: Any?): String {
+        val additionalTag = getAdditionalTag(tag)
+        return if(additionalTag != null) "[$logHeader|${additionalTag}]"
+        else "[$logHeader]"
+    }
+
+    /**
+     * LogHeader 뒤에 붙는 AdditionalTag를 반환한다.
+     */
+    fun getAdditionalTag(tag: Any?): String?{
         return if (tag != null) {
-            if (tag != WEB_LOG_TAG) "[$logHeader|${getTagString(tag) ?: getCallerClassName()}]"
-            else "[$logHeader|$WEB_LOG_TAG]"
-        } else "[$logHeader|${getCallerClassName()}]"
+            getTagString(tag) ?: getCallerClassName()
+        } else getCallerClassName()
     }
 
     /** 태그 String을 반환 한다 */
