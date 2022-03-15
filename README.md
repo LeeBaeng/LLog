@@ -6,7 +6,17 @@ this module will be also support OSL(onScreenLog) soon.<br>
 the OSL is useful in can not check log environment.<br>
 and it can use to report some bugs.<br>
 
-The 1.0.02 Release notes were:
+### The 1.0.3 Release notes were:
+※ not provide debug aar file since 1.0.3
+
+• Provide Ignore Tag (you can block specific tag's log)
+• Remove String's Extension Methods. (Change and combine to Any type)
+• add parameter printLevel for print intent info and bundle.
+• fix issue : print empty additional tag when it null.
+
+<br><br>
+
+### The 1.0.02 Release notes were:
 
 • support Extension Method for Kotlin(Extension for String, Any, Exception, Intent, Bundle Object)
   - just you can use like this.
@@ -15,7 +25,9 @@ The 1.0.02 Release notes were:
   - Intent : `intent.log()`
   - Bundle : `bundle.log()`
 
-The 0.01.001 beta Release notes were:<br>
+<br><br>
+
+### The 0.01.001 beta Release notes were:<br>
 
 • support various print levels : verbose, debug, info, warn, error, except, sys<br>
 • Add App's Important log level(sys)<br>
