@@ -27,9 +27,11 @@ object LLog {
         SYSTEM(7, "S", Log.ASSERT)
     }
 
-//    private const val WEB_LOG_TAG = "WebLog"
+    //    private const val WEB_LOG_TAG = "WebLog"
     private const val DEFAULT_HEADER = "LLog"
 
+    /** 출력을 무시할 Tag를 설정 한다. (Runtime중 필요에 따라 설정) */
+    private var ignoreTagList: ArrayList<String> = arrayListOf()
     var logLevel: LogLevel = LogLevel.VERBOSE // logLevel for Logcat console
     var logHeader: String = DEFAULT_HEADER
         private set
@@ -90,7 +92,14 @@ object LLog {
     }
 
     private fun log(level: LogLevel, msg: String, tag: Any? = null) {
-        if (logLevel <= level) Log.println(level.priority, getHeader(tag), msg)
+        // 출력 설정 값 보다 저수준 로그레벨 출력 무시
+        if (logLevel > level) return
+
+        // IgnoreTagList에 등록된 Tag 출력 무시
+        val additionalTag = getAdditionalTag(tag)
+        if (tag != null && ignoreTagList.contains(tag)) return
+
+        Log.println(level.priority, getHeader(tag, additionalTag), msg)
     }
 
     /**
@@ -98,18 +107,17 @@ object LLog {
      * tag가 String type이 아닌 경우 해당 Object의 Class Name을 Tag로 사용한다.
      *
      * @param tag 헤더에 포함할 로그를 출력하는 개체
+     * @param additionalTag (optional) additional Tag 입력된 경우 LLog.getAdditionalTag()을 수행하지 않고 커스텀한 AdditionalLog를 출력한다
      * @return 반환형식 : [logHeader|tag]
      */
-    fun getHeader(tag: Any?): String {
-        val additionalTag = getAdditionalTag(tag)
-        return if(additionalTag != null) "[$logHeader|${additionalTag}]"
+    fun getHeader(tag: Any?, additionalTag: String? = null): String {
+        val additionalTag = additionalTag ?: getAdditionalTag(tag)
+        return if (additionalTag != null) "[$logHeader|${additionalTag}]"
         else "[$logHeader]"
     }
 
-    /**
-     * LogHeader 뒤에 붙는 AdditionalTag를 반환한다.
-     */
-    fun getAdditionalTag(tag: Any?): String?{
+    /** LogHeader 뒤에 붙는 AdditionalTag를 반환한다. */
+    fun getAdditionalTag(tag: Any?): String? {
         return if (tag != null) {
             getTagString(tag) ?: getCallerClassName()
         } else getCallerClassName()
@@ -168,8 +176,8 @@ object LLog {
         }
     }
 
-    fun getPrintMethod(printLevel: LogLevel) : (String, Any?)-> Unit{
-        return when(printLevel){
+    fun getPrintMethod(printLevel: LogLevel): (String, Any?) -> Unit {
+        return when (printLevel) {
             LogLevel.VERBOSE -> this::verbose
             LogLevel.DEBUG -> this::debug
             LogLevel.INFO -> this::info
@@ -179,8 +187,24 @@ object LLog {
             else -> this::info
         }
     }
-}
 
+    /** Print를 무시할 Tag를 List에 추가한다. (출력 거부등록. Log 출력시 입력하는 Tag와 동일 객체 삽입) */
+    fun addIgnoreTag(tag: Any) {
+        val tag = getAdditionalTag(tag) ?: return
+        ignoreTagList.add(tag)
+    }
+
+    /** Print를 무시할 Tag를 List에서 제거한다. (출력 승인으로 전환) */
+    fun removeIgnoreTag(tag: Any) {
+        val tag = getAdditionalTag(tag) ?: return
+        if (ignoreTagList.contains(tag)) ignoreTagList.remove(tag)
+    }
+
+    /** Print를 무시할 Tag 목록을 초기화 한다. */
+    fun clearIgnoreTag() {
+        ignoreTagList.clear()
+    }
+}
 
 
 /** Verbose 로그를 출력한다.(Log level : 0) */
@@ -202,7 +226,7 @@ fun Any.logE(tag: Any? = null) = getPrintMethod(LLog.LogLevel.ERROR).invoke(this
 fun Exception.logEX(log: String? = null, tag: Any? = null) = LLog.except(this, log, tag)
 
 /** System 로그를 출력한다.(Log level : 7) */
-fun Any.logS(tag: Any? = null, printSpline: Boolean = true) = getPrintMethod(LLog.LogLevel.SYSTEM).invoke(this.toString(), tag)
+fun Any.logS(tag: Any? = null, printSpline: Boolean = true) = LLog.sys(this.toString(), tag, printSpline)
 
 /** Intent 정보를 출력한다 */
 fun Intent.log(includeExtra: Boolean = true, tag: Any? = null, prefix: String? = null, printLevel: LLog.LogLevel = LLog.LogLevel.INFO) = LLog.printIntentInfo(this, includeExtra, tag, prefix)
