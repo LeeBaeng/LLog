@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import com.leebaeng.util.array.LArrUtil
+import com.leebaeng.util.log.LLog.getPrintMethod
 import java.util.*
 
 /**
@@ -128,77 +129,76 @@ object LLog {
     }
 
     /** Intent 정보를 출력한다 */
-    fun printIntentInfo(intent: Intent?, includeExtra: Boolean = true, tag: Any? = null, prefix: String? = null) {
+    fun printIntentInfo(intent: Intent?, includeExtra: Boolean = true, tag: Any? = null, prefix: String? = null, printLevel: LogLevel = LogLevel.INFO) {
+        val log = getPrintMethod(printLevel)
         if (intent != null) {
-            info("${prefix ?: ""} Intent :: $intent, action : ${intent.action}", tag)
-            if (includeExtra) printIntentExtras(intent, tag)
+            log("${prefix ?: ""} Intent :: $intent, action : ${intent.action}", tag)
+            if (includeExtra) printIntentExtras(intent, tag, printLevel)
         } else {
-            info("${prefix ?: ""} Intent is null!!", tag)
+            log("${prefix ?: ""} Intent is null!!", tag)
         }
     }
 
     /** Intent의 Extra 정보를 출력한다 */
-    fun printIntentExtras(intent: Intent, tag: Any?) {
+    fun printIntentExtras(intent: Intent, tag: Any?, printLevel: LogLevel = LogLevel.INFO) {
         intent.extras?.let {
-            printBundle(it, tag)
+            printBundle(it, tag, printLevel)
         }
     }
 
     /** Bundle Item 정보를 출력한다 */
-    fun printBundle(bundle: Bundle, tag: Any?) {
+    fun printBundle(bundle: Bundle, tag: Any?, printLevel: LogLevel = LogLevel.INFO) {
+        val log = getPrintMethod(printLevel)
         for (key in bundle.keySet()) {
             val value = bundle[key]
-            if (value!! !is Array<*>) info(" └[" + key + "]=" + value.toString() + " (" + value.javaClass.name + ")", tag)
-            else info(
+            if (value!! !is Array<*>) log(" └[" + key + "]=" + value.toString() + " (" + value.javaClass.name + ")", tag)
+            else log(
                 " └[" + key + "]=" + Arrays.deepToString(LArrUtil.convertObjectToArray(value)) + " (Array type : " + value.javaClass.componentType + "[])",
                 tag
             )
         }
     }
+
+    fun getPrintMethod(printLevel: LogLevel) : (String, Any?)-> Unit{
+        return when(printLevel){
+            LogLevel.VERBOSE -> this::verbose
+            LogLevel.DEBUG -> this::debug
+            LogLevel.INFO -> this::info
+            LogLevel.WARN -> this::warn
+            LogLevel.ERROR, LogLevel.EXCEPT -> this::err
+            LogLevel.SYSTEM -> this::sys
+            else -> this::info
+        }
+    }
 }
 
 
-/** Verbose 로그를 출력한다.(Log level : 0) */
-fun String.logV(tag: Any? = null) = LLog.verbose(this, tag)
 
 /** Verbose 로그를 출력한다.(Log level : 0) */
-fun Any.logV(tag: Any? = null) = LLog.verbose(this.toString(), tag)
+fun Any.logV(tag: Any? = null) = getPrintMethod(LLog.LogLevel.VERBOSE).invoke(this.toString(), tag)
 
 /** Debug 로그를 출력한다.(Log level : 1) */
-fun String.logD(tag: Any? = null) = LLog.verbose(this, tag)
-
-/** Debug 로그를 출력한다.(Log level : 1) */
-fun Any.logD(tag: Any? = null) = LLog.verbose(this.toString(), tag)
+fun Any.logD(tag: Any? = null) = getPrintMethod(LLog.LogLevel.DEBUG).invoke(this.toString(), tag)
 
 /** Info 로그를 출력한다.(Log level : 2) */
-fun String.logI(tag: Any? = null) = LLog.verbose(this, tag)
-
-/** Info 로그를 출력한다.(Log level : 2) */
-fun Any.logI(tag: Any? = null) = LLog.verbose(this.toString(), tag)
+fun Any.logI(tag: Any? = null) = getPrintMethod(LLog.LogLevel.INFO).invoke(this.toString(), tag)
 
 /** Warning 로그를 출력한다.(Log level : 3) */
-fun String.logW(tag: Any? = null) = LLog.verbose(this, tag)
-
-/** Warning 로그를 출력한다.(Log level : 3) */
-fun Any.logW(tag: Any? = null) = LLog.verbose(this.toString(), tag)
+fun Any.logW(tag: Any? = null) = getPrintMethod(LLog.LogLevel.WARN).invoke(this.toString(), tag)
 
 /** Error 로그를 출력한다.(Log level : 4) */
-fun String.logE(tag: Any? = null) = LLog.verbose(this, tag)
-
-/** Error 로그를 출력한다.(Log level : 4) */
-fun Any.logE(tag: Any? = null) = LLog.verbose(this.toString(), tag)
+fun Any.logE(tag: Any? = null) = getPrintMethod(LLog.LogLevel.ERROR).invoke(this.toString(), tag)
 
 /** Exception 로그를 출력한다.(Log level : 5) */
 fun Exception.logEX(log: String? = null, tag: Any? = null) = LLog.except(this, log, tag)
 
 /** System 로그를 출력한다.(Log level : 7) */
-fun String.logS(tag: Any? = null, printSpline: Boolean = true) = LLog.sys(this, tag, printSpline)
-
-/** System 로그를 출력한다.(Log level : 7) */
-fun Any.logS(tag: Any? = null, printSpline: Boolean = true) = LLog.sys(this.toString(), tag, printSpline)
+fun Any.logS(tag: Any? = null, printSpline: Boolean = true) = getPrintMethod(LLog.LogLevel.SYSTEM).invoke(this.toString(), tag)
 
 /** Intent 정보를 출력한다 */
-fun Intent.log(includeExtra: Boolean = true, tag: Any? = null, prefix: String? = null) = LLog.printIntentInfo(this, includeExtra, tag, prefix)
+fun Intent.log(includeExtra: Boolean = true, tag: Any? = null, prefix: String? = null, printLevel: LLog.LogLevel = LLog.LogLevel.INFO) = LLog.printIntentInfo(this, includeExtra, tag, prefix)
 
 /** Bundle Item 정보를 출력한다 */
-fun Bundle.log(tag: Any? = null) = LLog.printBundle(this, tag)
+fun Bundle.log(tag: Any? = null, printLevel: LLog.LogLevel = LLog.LogLevel.INFO) = LLog.printBundle(this, tag)
+
+
