@@ -70,7 +70,7 @@ dependencyResolutionManagement {
 Add the dependency to build.gradle(App or Module Level)
 ```gradle
 dependencies {
-    implementation 'com.github.LeeBaeng:LLog:1.0.02'
+    implementation 'com.github.LeeBaeng:LLog:1.0.3'
 }
 ```
 
